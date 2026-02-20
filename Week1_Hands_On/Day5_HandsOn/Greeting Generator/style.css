@@ -1,0 +1,13 @@
+body{
+    margin:0px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    
+}
+#div{
+    background-color: rgb(214, 208, 208);
+    border: 1px solid ;
+    border-radius: 10px;
+    
+}
