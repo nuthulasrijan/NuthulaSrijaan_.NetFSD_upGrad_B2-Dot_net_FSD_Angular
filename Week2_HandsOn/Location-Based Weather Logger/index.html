@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Location Saver with Error Handling</h3>
+
+<button onclick="getLocation()">Get Location</button>
+
+<p id="result"></p>
+
+<script>
+
+function getLocation() {
+
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(
+            showPosition,   
+            showError       
+        );
+
+    } else {
+        document.getElementById("result").innerHTML =
+            "Geolocation not supported.";
+    }
+}
+
+
+
+function showPosition(position) {
+
+    let lat = position.coords.latitude;
+    let lon = position.coords.longitude;
+
+    document.getElementById("result").innerHTML =
+        "Lat: " + lat + " | Lon: " + lon;
+
+    let data = {
+        latitude: lat,
+        longitude: lon
+    };
+
+    localStorage.setItem("myLocation", JSON.stringify(data));
+}
+
+
+function showError(error) {
+
+    let message = "";
+
+    if (error.code === 1) {
+        message = "Permission Denied ❌";
+    }
+    else if (error.code === 2) {
+        message = "Location Unavailable ⚠";
+    }
+    else if (error.code === 3) {
+        message = "Request Timeout ⏳";
+    }
+    else {
+        message = "Unknown Error";
+    }
+
+    document.getElementById("result").innerHTML = message;
+}
+
+
+window.onload = function() {
+
+    let saved = JSON.parse(localStorage.getItem("myLocation"));
+
+    if (saved) {
+        document.getElementById("result").innerHTML =
+            "Saved → Lat: " + saved.latitude +
+            " | Lon: " + saved.longitude;
+    }
+
+}
+
+</script>
+
+</body>
+</html>

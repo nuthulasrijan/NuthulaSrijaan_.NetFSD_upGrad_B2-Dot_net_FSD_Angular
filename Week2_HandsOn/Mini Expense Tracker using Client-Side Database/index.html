@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>Mini Expense Tracker</h3>
+
+<input id="title" placeholder="Title"> <br> <br>
+<input id="amount" placeholder="Amount"><br> <br>
+<input id="date" type="date"><br> <br>
+
+<button onclick="add()">Add</button>
+<button onclick="view()">View</button>
+<button onclick="del()">Delete</button>
+
+<ul id="list"></ul>
+
+<script>
+
+let db = openDatabase("DB", "1.0", "ExpenseDB", 1024*1024);
+
+
+db.transaction(function(tx){
+  tx.executeSql("CREATE TABLE IF NOT EXISTS exp (id INTEGER PRIMARY KEY, title TEXT, amount REAL, date TEXT)");
+});
+
+
+function add(){
+  db.transaction(function(tx){
+    tx.executeSql("INSERT INTO exp (title,amount,date) VALUES (?,?,?)",
+      [title.value, amount.value, date.value]);
+  }, errorHandler);
+}
+
+function view(){
+  list.innerHTML = "";
+  db.transaction(function(tx){
+    tx.executeSql("SELECT * FROM exp", [], function(tx,res){
+      for(let i=0;i<res.rows.length;i++){
+        let r = res.rows.item(i);
+        list.innerHTML += "<li>"+r.id+" "+r.title+" "+r.amount+" "+r.date+"</li>";
+      }
+    }, errorHandler);
+  });
+}
+function del(){
+  let id = prompt("Enter ID");
+  db.transaction(function(tx){
+    tx.executeSql("DELETE FROM exp WHERE id=?", [id]);
+  }, errorHandler);
+}
+function errorHandler(error){
+  console.log("Error: " + error.message);
+}
+
+</script>
+</body>
+</html>
